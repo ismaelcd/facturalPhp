@@ -1,0 +1,111 @@
+<html>
+<head>
+	<title>SimpleUser Documentation</title>
+	<style>
+	body{font-family:Arial; font-size:13px;}
+	h1, h2 {margin:3px; padding:0px;}
+	h2{color:#00c;}
+	div.title_description{font-style:italic; background:#eee; padding:3px; border:1px solid #777;}
+	div.box{border:1px solid #777; border-top:0; background-color:#fff; padding:5px;}
+	div.box .title{font-weight:bold;}
+	div.box .description{display:inline; padding-left:5px; color: #555;}
+	div.box .description:before{content: " # ";}
+	</style>
+</head>
+<body>
+<h1>Description</h1>
+<b>SimpleUser</b> is meant to be a simple user creation and authentication module for use in any site. By default it stores a user's name, email address, password (encrypted of course), administrator status and timestamp of when the account was created. The email address is used as the login username. There is a class, <b>DBTools</b>, for creating the necessary database, tables and first administrator account. The main class, <b>SimpleUser</b>, is to be used by the main application for handling user accounts. SimpleUser is easily extended, (for example: to log user logins in a table) but already contains functions needed for all basic user management tasks.<br><br>
+This same information is available at <a href='http://www.bobk4.com/simpleuser'>http://www.bobk4.com/simpleuser</a>.
+
+<h1>Installation</h1>
+<div class='title_description'>Installation is an easy, 3 step process.</div>
+<div class='box'>
+	<div class='title'>STEP 1</div>
+	Edit the database configuration in SimpleUserConfig.php to match your settings. You can either specify a database that already exists, or give it the info for the one you would like it to create. Two tables are needed and will be created if they don't already exist: "{prefix}users" and "{prefix}user_creds".
+
+	<div class='title'>STEP 2</div>
+	Look at example.php for the simple code required to set up the database.
+
+	<div class='title'>STEP 3</div>
+	Look at example.php and documentation.html (this file) for the complete rundown of functions available for use in the 'User' class.
+</div>
+
+<h1>Files</h1>
+<div class='title_description'></div>
+<div class='box'>
+	<div class='title'>Classes</div>
+		DBTools.class.php<div class='description'>Used for creating the necessary database, tables and first administrator account. Only to be used for setup.</div><br>
+		SimpleUser.class.php<div class='description'>The main class file. Handles the registration, editing, deleting, and authentication of user accounts, including the display of forms neccesary for those purposes.</div><br>
+	<div class='title'>Other</div>
+		SimpleUserConfig.php<div class='description'>Required by both classes. Lets you configure your database connection details and several other options needed by the classes.</div><br>
+		example.php<div class='description'>Examples of the most-used functions.</div><br>
+		documentation.html<div class='description'>That's this file, silly goose.</div>
+</div>
+
+<h1>Classes in this package</h1>
+<h2>DBTools class</h2>
+<div class='title_description'>This class handles the creation of the database, necessary tables and first administrator account.</div>
+<div class='box'>
+	<div class='title'>Variables</div>
+	private $dbname;<div class='description'>Name of the DB (set in SimpleUserConfig.php)</div><br>
+	private $dbuser;<div class='description'>Name of DB user (set in SimpleUserConfig.php)</div><br>
+	private $dbpass;<div class='description'>DB Password (set in SimpleUserConfig.php)</div><br>
+	private $dbhost;<div class='description'>Address of DB host (set in SimpleUserConfig.php)</div><br>
+	private $prefix;<div class='description'>Prefix to prepend to table names (set in SimpleUserConfig.php)</div><br>
+	private $dblink;<div class='description'>Connection link once DB connection is established</div><br>
+	private $goodmsg;<div class='description'>Tracks setup process to be output for later debugging</div>
+</div>
+<div class='box'>
+	<div class='title'>Private Functions</div>
+	make_tables()<div class='description'>Does the actual dirty work of creating the tables if they don't exist. Called from set_up_db().</div><br>
+	throw_error($msg)<div class='description'>Will be called when an unrecoverable error occurs. Outputs the error to the screen and exits script execution.</div>
+</div>
+<div class='box'>
+	<div class='title'>Public Functions</div>
+	set_up_db()<div class='description'>Creates the DB according to options in SimpleUserConfig.php, if it doesn't exist already. Calls make_tables().</div><br>
+	check_db()<div class='description'>Checks all DB/table configuration. Also makes sure an admin account exists.</div><br>
+	create_admin_account($email, $password[, $firstname, $lastname])<div class='description'>Creates the first admin account in the DB. $email and $password are required.</div>
+</div>
+
+<h2>SimpleUser class</h2>
+<div class='title_description'>This class handles the registration, editing, deleting, and authentication of user accounts, including the display of forms neccesary for those purposes.</div>
+<div class='box'>
+	<div class='title'>Variables</div>
+	private $dbname;<div class='description'>Name of the DB (set in SimpleUserConfig.php)</div><br>
+	private $dbuser;<div class='description'>Name of DB user (set in SimpleUserConfig.php)</div><br>
+	private $dbpass;<div class='description'>DB Password (set in SimpleUserConfig.php)</div><br>
+	private $dbhost;<div class='description'>Address of DB host (set in SimpleUserConfig.php)</div><br>
+	private $prefix;<div class='description'>Prefix to prepend to table names (set in SimpleUserConfig.php)</div><br>
+	private $dblink;<div class='description'>Connection link once DB connection is established</div><br>
+	private $user_session;<div class='description'>The place inn $_SESSION where user session data can be stored (set in SimpleUserConfig.php)</div><br>
+	private $min_pass_length;<div class='description'>The minimum required length for passwords (set in SimpleUserConfig.php)</div>
+	private $error;<div class='description'>Stores errors that have occurred during script execution.</div>
+</div>
+
+<div class='box'>
+	<div class='title'>Private Functions</div>
+	set_error($msg)<div class='description'>Will be called when an error occurs. Stores the error.</div>
+	get_error($msg)<div class='description'>Returns all errors and clears error variable.</div>
+</div>
+
+<div class='box'>
+	<div class='title'>Public Functions</div>
+	show_login_form($post_to)<div class='description'>Shows a basic form with fields to allow a user to log in. $post_to is the name of the script that will be handling the login.</div><br>
+	show_registration_form($post_to)<div class='description'>Shows a basic form with fields to allow a user to create thier own account. $post_to is the name of the script that will be handling the registration.</div><br>
+	show_profile_edit_form($post_to[, $userID])<div class='description'>Shows a basic form with fields to allow a user to update their profile (name, email, password, etc.) $post_to is the name of the script that will be handling the updating of the profile. $userID is the ID of a user to edit (if not the current user.) This only works if the current user is an administrator. If left blank, it will alllow the current user to change their own profile. Allows admins to give admin rights to other users.</div><br>
+	process_login()<div class='description'>Authenticates the user log in and sets session variables for later use by scripts.</div><br>
+	process_registration()<div class='description'>Processes the submitted form data for new user creation. Makes sure logins are unique via email_exists().</div><br>
+	process_profile_edit()<div class='description'>Stores changes to a logged in user's profile. Makes sure logins are unique via email_exists().</div><br>
+	delete_account($userID)<div class='description'>Will delete the account of the given userID.</div><br>
+	email_exists($email)<div class='description'>Checks that the given email address exists as a login in the system. Returns true if yes, false otherwise.</div><br>
+	get_userID()<div class='description'>Returns the userID for the current user.</div><br>
+	user_info($userID)<div class='description'>Returns the name, email, admin status and timestamp the account was created for the given user, as an array.</div><br>
+	is_logged_in()<div class='description'>Returns true if the current user is logged in, false otherwise.</div><br>
+	is_admin()<div class='description'>Returns true if the current user is logged in as an administrator, false otherwise.</div><br>
+	all_users()<div class='description'>Returns an array of all user info (not passwords) for every user. Only available to logged in administrators.</div><br>
+	log_out()<div class='description'>Logs out the currently logged in user.</div>
+</div>
+
+<div style='margin-top:10px;'>Copyright (c) 2011 Bob Kennedy | kennedy7@gmail.com</div>
+</body>
+</html>
